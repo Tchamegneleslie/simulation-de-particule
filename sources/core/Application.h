@@ -9,11 +9,14 @@ class Application {
         bool init();
         void run();
         void shutdown();
+        float ComputerDeltaTime();
 
     private:
-        SDL_Window* window = nullptr;
-        SDL_Renderer* renderer = nullptr;
+        SDL_Window* mWindow = nullptr;
+        SDL_Renderer* mRenderer = nullptr;
         bool running = true;
+        Uint64 mLastTicks;
 
         ImguiLayer imgui;
+        Simulation mSimulation;
 };
