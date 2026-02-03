@@ -3,7 +3,7 @@ echo =====================
 echo Compilation du projet 
 echo =====================
 
-clang++ ^sources/main.cpp ^sources/core/Application.cpp ^sources/Simulation/Simulation.cpp ^sources/ui/ImguiLayer.cpp ^external/imgui/imgui.cpp ^external/imgui/imgui_draw.cpp ^external/imgui/imgui_tables.cpp ^external/imgui/imgui_widgets.cpp ^external/imgui/imgui_demo.cpp ^external/imgui/backends/imgui_impl_sdl3.cpp ^external/imgui/backends/imgui_impl_sdlrenderer3.cpp ^-Iexternal/imgui ^-Iexternal/imgui/backends ^-Iexternal/SDL3/include ^-Isources ^-Lexternal/SDL3/lib ^-lSDL3 ^-o app.exe
+clang++ ^sources/main.cpp ^sources/core/Application.cpp ^sources/physics/Physics.cpp ^sources/Simulation/Simulation.cpp ^sources/ui/ImguiLayer.cpp ^external/imgui/imgui.cpp ^external/imgui/imgui_draw.cpp ^external/imgui/imgui_tables.cpp ^external/imgui/imgui_widgets.cpp ^external/imgui/imgui_demo.cpp ^external/imgui/backends/imgui_impl_sdl3.cpp ^external/imgui/backends/imgui_impl_sdlrenderer3.cpp ^-Iexternal/imgui ^-Iexternal/imgui/backends ^-Iexternal/SDL3/include ^-Isources ^-Lexternal/SDL3/lib ^-lSDL3 ^-o app.exe
 
 if %errorlevel% neq 0 (
     echo.

@@ -1,15 +1,104 @@
 #include "Simulation.h"
+#include "physics/Physics.h"
+#include <cstdlib>
 
-Simulation::Simulation(): mParams(), mTime(0.0f){}
+
+
+Simulation::Simulation(){
+    Reset();
+}
+
+void Simulation::Reset(){
+    mParticles.clear();
+    mParticles.resize(mParams.particleCount);
+
+    for( auto& p : mParticles ){
+        p.position.x = rand() % 800;
+        p.position.y = rand() % 600;
+        p.velocity.x = ((rand() % 200) - 100) / 2.0f;
+        p.velocity.y = ((rand() % 200) - 100) / 2.0f;
+        
+        
+
+        
+    }
+}
+
+void Simulation::RequestReset(){
+    mNeedsReset = true;
+}
 
 void Simulation::Update(float deltaTime){
 
-    if (mParams.paused) return ;
+    if (mNeedsReset){
+        Reset();
+        mNeedsReset = false;
+    }
 
-    mTime += deltaTime * mParams.timeScale;
+    Vector2 centre(400.0f, 300.0f);
+    Vector2 force{0.0f, 0.0f};
+
+    for (auto& p : mParticles){
+        if (mPhysicsParams.mode == ForceMode::Off){
+            p.position  += p.velocity * mParams.speed * deltaTime;
+        }
+
+        if(mPhysicsParams.mode == ForceMode::Vortex){
+        
+            force = physics::VortexForce(p.velocity, 200.0f/*mPhysicsParams.forceStrength*/);
+        } 
+    
+        
+        
+        else if (mPhysicsParams.mode == ForceMode::Attraction || mPhysicsParams.mode == ForceMode::Repulsion){
+
+            force = physics::Centralforce(p.position, centre, mPhysicsParams);
+
+        }
+        
+
+        physics::Integrate(p.position, p.velocity, force, deltaTime);
+
+        // limites d'ecran
+
+        if (p.position.x < 0.0f) {
+            p.position.x = 0.0f;
+            p.velocity.x *= -0.8f;
+        }
+        else if(p.position.x > 800.0f){
+            p.position.x =  800.0f;
+            p.velocity.x *= -0.8f;
+        }
+        if (p.position.y < 0.0f){
+            p.position.y = 0.0f;
+            p.velocity.y *= -0.8f;
+        } 
+        else if(p.position.y > 600.0f){
+            p.position.y = 600.0f;
+            p.velocity.y *= -0.8f;
+        }
+
+        
+
+        // security
+
+        
+    }
+
+}
+
+ 
+
+const std::vector<Particles>& Simulation::GetParticles() const {
+    return mParticles;
 }
 
 SimulationParams & Simulation::GetParams(){
 
     return mParams;
+}
+
+PhysicsParams& Simulation::GetPhysicsParams(){
+
+    return mPhysicsParams;
 }

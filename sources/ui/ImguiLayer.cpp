@@ -30,7 +30,7 @@ void ImguiLayer::SetSimulation( Simulation* simulation ){
 
     mSimulation = simulation;
 
-}
+} 
 
 void ImguiLayer::ProcessEvent(const SDL_Event& event){
     ImGui_ImplSDL3_ProcessEvent(&event);
@@ -47,19 +47,39 @@ void ImguiLayer::Begin(){
 
 void ImguiLayer::Draw(){
 
-    //ImGui::ShowDemoWindow();
-
     if (!mSimulation) return;
 
     SimulationParams & mParams = mSimulation->GetParams();
+    PhysicsParams& mPhysicsParams = mSimulation->GetPhysicsParams();
+    static int lastCount = mParams.particleCount;
     
     ImGui::Begin("Simulation ");
-    ImGui::SliderInt("Particles", & mParams.particleCount, 1, 1000 );
-    ImGui::SliderFloat("Time scale", & mParams.timeScale, 0.1f, 5.0f );
+
+    if (ImGui::SliderInt("Particles", &mParams.particleCount, 10, 1000)){
+        if (mParams.particleCount != lastCount){
+            mSimulation->RequestReset();
+            lastCount = mParams.particleCount;
+        }
+    }
+    
+    ImGui::SliderFloat("Speed", & mParams.speed, 1.0f, 100.0f );
+    ImGui::SliderFloat("Force", & mPhysicsParams.forceStrength, 0.0f, 200.0f);
+    
+    const char* modes[]  = { "Off", "Attraction", "Repulsion", "Vortex" };
+    int current = static_cast<int>(mPhysicsParams.mode);
+
+    if( ImGui::Combo("Force Mode", &current, modes, 4)){
+        mPhysicsParams.mode = static_cast<ForceMode>(current);
+    }
+
     ImGui::Checkbox("Magnetic force", & mParams.magneticOn );
     ImGui::Checkbox("Pause", &mParams.paused );
     ImGui::Separator();
     ImGui::Text("Simulation active");
+
+    if ( ImGui::Button("Reset")){
+        mSimulation->RequestReset(); 
+    }
     ImGui::End();
 
 }

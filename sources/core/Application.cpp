@@ -37,22 +37,29 @@ bool Application::init(){
 }
 
 float Application::ComputerDeltaTime(){
-    Uint64 currentTicks = SDL_GetTicks();
-    float deltaTime = ( currentTicks - mLastTicks ) / 1000.0f;
-    mLastTicks = currentTicks;
+    Uint64 currentCounter = SDL_GetPerformanceCounter();
+    Uint64 mLastCounter = SDL_GetPerformanceCounter();
+    const double freq = (double)SDL_GetPerformanceFrequency();
+    float deltaTime = ( currentCounter - mLastCounter ) / freq;
+    mLastCounter = currentCounter;
+
+    // eviter un deltaTime trop eleve
+
+    if ( deltaTime > 0.033f) deltaTime = 0.033f;
 
     return deltaTime;
 
-}
+} 
 
 void Application::run(){
-
-    //SDL_ShowWindow(mWindow);
 
     SDL_Event event;
     imgui.SetSimulation(&mSimulation);
 
     while(running){
+
+        float deltaTime = ComputerDeltaTime();
+
         while(SDL_PollEvent(&event)){
             
             imgui.ProcessEvent(event);
@@ -61,15 +68,34 @@ void Application::run(){
                 running = false;
             }
         }
-        
-        float deltaTime = ComputerDeltaTime();
+
+        // Mise a jour de deltaTime
 
         mSimulation.Update(deltaTime);
 
-        // dessiner un fond bleu
+
+        // rendu SDL
 
         SDL_SetRenderDrawColor(mRenderer, 20, 20, 20, 255);
         SDL_RenderClear(mRenderer);
+
+        // dessiner les particules
+
+        SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+
+        SDL_FRect rect;
+        rect.w = 3;
+        rect.h = 3;
+
+        for ( auto& p: mSimulation.GetParticles()){
+            rect.x = p.position.x;
+            rect.y = p.position.y;
+            
+            SDL_RenderFillRect(mRenderer, &rect);
+
+        }  
+
+        // Rendu imgui
 
         imgui.Begin();
         
