@@ -1,3 +1,6 @@
+// boucle principale
+
+
 #include "Application.h"
 #include <iostream> 
 
@@ -5,7 +8,7 @@ bool Application::init(){
     int init = SDL_Init(SDL_INIT_VIDEO);
     if (init < 0){
         SDL_Log("SDL_Init error : %s", SDL_GetError());
-        //std::cerr << "Error SDL_Init\n";
+        
         return false;
     }
 
@@ -22,8 +25,8 @@ bool Application::init(){
     mRenderer = SDL_CreateRenderer(mWindow, NULL);
 
     if( !mRenderer ){
-        //std::cerr << "Error create renderer" << SDL_GetError() << std::endl;
-        SDL_Log("Imgui renderer null ");
+        std::cerr << "Error create renderer" << SDL_GetError() << std::endl;
+        
 
         SDL_DestroyWindow(mWindow);
         SDL_Quit();
@@ -43,9 +46,9 @@ float Application::ComputerDeltaTime(){
     float deltaTime = ( currentCounter - mLastCounter ) / freq;
     mLastCounter = currentCounter;
 
-    // eviter un deltaTime trop eleve
+    // limitation du pas de temps ( 60 FPS )
 
-    if ( deltaTime > 0.033f) deltaTime = 0.033f;
+    if ( deltaTime > 0.066f) deltaTime = 0.066f;
 
     return deltaTime;
 

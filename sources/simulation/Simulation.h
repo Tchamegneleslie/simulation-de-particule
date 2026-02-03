@@ -15,8 +15,7 @@ struct Particles{
 struct SimulationParams {
     int particleCount = 100;
     float speed = 20.0f;
-    bool magneticOn = false;
-    bool paused = false;
+    
 };
 
 class Simulation {

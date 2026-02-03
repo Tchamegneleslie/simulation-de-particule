@@ -36,24 +36,22 @@ void Simulation::Update(float deltaTime){
     }
 
     Vector2 centre(400.0f, 300.0f);
-    Vector2 force{0.0f, 0.0f};
+    
 
     for (auto& p : mParticles){
-        if (mPhysicsParams.mode == ForceMode::Off){
-            p.position  += p.velocity * mParams.speed * deltaTime;
-        }
+        Vector2 force{0.0f, 0.0f};
 
-        if(mPhysicsParams.mode == ForceMode::Vortex){
-        
-            force = physics::VortexForce(p.velocity, 200.0f/*mPhysicsParams.forceStrength*/);
-        } 
-    
-        
-        
-        else if (mPhysicsParams.mode == ForceMode::Attraction || mPhysicsParams.mode == ForceMode::Repulsion){
-
-            force = physics::Centralforce(p.position, centre, mPhysicsParams);
-
+        switch (mPhysicsParams.mode){
+            case ForceMode::Off :
+                p.position  += p.velocity * mParams.speed * deltaTime;
+                break;
+            case ForceMode::Vortex:
+                force = physics::VortexForce(p.velocity,mPhysicsParams.forceStrength);
+                break;
+            case ForceMode::Attraction:
+            case ForceMode::Repulsion:
+                force = physics::Centralforce(p.position, centre, mPhysicsParams);
+                break;
         }
         
 
@@ -80,7 +78,7 @@ void Simulation::Update(float deltaTime){
 
         
 
-        // security
+        
 
         
     }

@@ -2,7 +2,18 @@
 
 
 Vector2 physics::VortexForce(const Vector2& velocity, float strength){
-    return Vector2(-velocity.y, velocity.x) * strength;
+    float speed = velocity.Lenght();
+
+    if(speed < 0.0001f) return Vector2(0.0f, 0.0f);
+
+    Vector2 perpendicular(-velocity.y, velocity.x);
+
+     //normalisation sure
+    perpendicular /= speed;
+
+    return perpendicular * strength;
+
+
 }
 
 Vector2 physics::Centralforce( const Vector2& position, const Vector2& centre, const PhysicsParams& params ){

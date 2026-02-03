@@ -72,8 +72,6 @@ void ImguiLayer::Draw(){
         mPhysicsParams.mode = static_cast<ForceMode>(current);
     }
 
-    ImGui::Checkbox("Magnetic force", & mParams.magneticOn );
-    ImGui::Checkbox("Pause", &mParams.paused );
     ImGui::Separator();
     ImGui::Text("Simulation active");
 
